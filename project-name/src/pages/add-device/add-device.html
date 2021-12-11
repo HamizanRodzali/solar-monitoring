@@ -1,0 +1,27 @@
+<!--
+  Generated template for the AddDevicePage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+  <ion-navbar>
+    <ion-title>Add Device</ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+  <ion-item>
+    <ion-label color="primary" stacked>Device Name</ion-label>
+    <ion-input [(ngModel)]="device.name" required type="text" placeholder="Device Name"></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-label color="primary" stacked>Device Macaddress</ion-label>
+    <ion-input [(ngModel)]="device.macAddress" required type="text" placeholder="Device Macaddress"></ion-input>
+  </ion-item>
+
+  <div padding>
+    <button ion-button full [disabled]="!device.macAddress || !device.name" (click)="create()">Create</button>
+  </div>
+</ion-content>

@@ -1,0 +1,46 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>
+      Mobile Apps Solar Monitoring System
+    </ion-title>
+    <ion-buttons start>
+      <button ion-button icon-only (click)="addDevice()">
+        <ion-icon name="add"></ion-icon>
+      </button>
+    </ion-buttons>
+  </ion-navbar>
+</ion-header>
+
+<ion-content >
+  <ion-searchbar (ionInput)="getItems($event)"></ion-searchbar>
+  <ion-card *ngFor="let d of data.data">
+    <ion-card-content>
+      <h3>Device Name : {{d.name}}</h3>
+      <p>Mac Address : {{d.macAddress}}</p>
+      <!-- <label>Created At : {{device.createdAt | date:'medium'}}</label> -->
+    </ion-card-content>
+    <ion-row>
+      <ion-col>
+        <button ion-button icon-left  small (click)="viewDevice()">
+          <ion-icon name="eye"></ion-icon>
+          <div>View Device</div>
+        </button>
+        <button ion-button icon-left  small color="danger" (click)="deleteDevice(data.data)">
+          <ion-icon name="trash"></ion-icon>
+          <div>Delete Device</div>
+        </button>
+      </ion-col>
+    
+    </ion-row>
+  </ion-card>
+
+  <!-- {{data}} -->
+  <!-- <button ion-button>View Device</button> -->
+
+</ion-content>
+
+<ion-footer>
+  <ion-fab>
+    <button ion-fab>+</button>
+  </ion-fab>
+</ion-footer>

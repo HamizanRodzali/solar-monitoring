@@ -1,0 +1,3 @@
+## Solar Monitoring
+- npm install
+
