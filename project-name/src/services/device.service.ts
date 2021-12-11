@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
@@ -16,11 +16,16 @@ export class DeviceService {
     return this.http.get<Device[]>(this.baseURL + 'device')
   }
 
-  addDevice(device: Device): Observable<any> {
+  addDevice(device: Device): Observable<HttpResponse<any>> {
     const headers = { 'content-type': 'application/json' }
     const body = JSON.stringify(device);
     console.log(body)
-    return this.http.post(this.baseURL + 'device', body, { 'headers': headers })
+    return this.http.post<any>(this.baseURL + 'device', body, { 'headers': headers })
+  }
+
+  delete(id): Observable<any> {
+    const headers = { 'content-type': 'application/json' }
+    return this.http.delete<any>(this.baseURL + 'device/' + id, { 'headers': headers });
   }
 
 }

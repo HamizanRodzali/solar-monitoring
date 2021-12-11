@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { DeviceService } from '../../services/device.service';
+import { ToastService } from '../../services/toast.service';
 import { HomePage } from '../home/home';
 
 /**
@@ -24,17 +25,17 @@ export class AddDevicePage {
 
   constructor(public navCtrl: NavController,
               public navParams: NavParams, 
-              public deviceService: DeviceService) {
+              public deviceService: DeviceService,
+              public toastCtrl: ToastService) {
   }
 
-  ionViewDidLoad() {
-    console.log('ionViewDidLoad AddDevicePage');
-  }
+  ionViewDidLoad() {}
 
   create() {
     this.deviceService.addDevice(this.device)
       .subscribe(data => {
         console.log(data)
+        this.toastCtrl.showToast('data added');
         this.navCtrl.setRoot(HomePage);
       })      
   }

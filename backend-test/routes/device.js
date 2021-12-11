@@ -1,36 +1,35 @@
 const express = require('express');
-const jsonfile = require('jsonfile');
+const Device = require('../model/device.model');
 const router = express.Router();
 
-router.post('/device', function (req, res) {
-    var { name, macAddress } = req.body;
-    var option = { flag: 'a' }
-    var filePath = './images/db.json';
-    jsonfile.writeFile(filePath, req.body, option, function (err) {
-        if (err) throw err;
-        console.log('data write');
-    })
-    // console.log(name, macAddress);
-    res.json({ msg: 'success' });
+router.get('/', function (req, res) {
+    Device.find({}, function (err, devices) {
+        if (err) return res.status(500).send(err);
+        res.status(200).json(devices);
+    });
 });
 
-router.get('/device', function (req, res) {
-    var dataList = [
-        {
-            name: 'Solar 1',
-            macAddress: '45:65:67:56:45'
-        },
-        {
-            name: 'Solar 2',
-            macAddress: '45:65:67:56:45'
-        },
-        {
-            name: 'Solar 3',
-            macAddress: '45:65:67:56:45'
-        }
-    ];
+router.delete('/:id', function (req, res) {
+    Device.findOne({
+        _id: req.params.id
+    }, function(err, device) {
+        if (err) return res.status(500).send(err);
 
-    res.json({data: dataList});
+        device.remove(function(err) {
+            if (err) return res.status(500).send(err);
+            return res.status(204).end();
+        });
+    });
+    // console.log(req.params.id)
+})
+
+router.post('/', function (req, res) {
+    var device = req.body;
+    // this device is created by the current user
+    // device.createdBy = req.user._id;
+    Device.create(device, function (err, device) {
+        if (err) return res.status(500).send(err);
+        res.json(device);
+    });
 });
-
 module.exports = router;

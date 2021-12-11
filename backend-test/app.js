@@ -1,21 +1,25 @@
 const http = require('http');
 const express = require('express');
 const logger = require('morgan');
-const cors = require('cors');
 const socketIO = require('socket.io');
+const mongoose = require('mongoose');
+const cors =  require('cors');
+// Connect to database
+mongoose.Promise = global.Promise;
+mongoose.connect('mongodb://localhost:27017/test', {
+    options: {
+        db: {
+            safe: true
+        }
+    }
+});
+mongoose.connection.on('error', function(err) {
+    console.error('MongoDB connection error: ' + err);
+    process.exit(-1);
+});
 
 const app = express();
-
-// app.use(cors());
-// app.options('*', cors());
-
-app.use(function (req, res, next) {
-    res.setHeader("Access-Control-Allow-Origin", "http://localhost:8100");
-    res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS, DELETE, PUT");
-    res.setHeader("Access-Control-Allow-Credentials", true);
-    next();
-})
+app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(logger('tiny'))
@@ -39,9 +43,10 @@ io.on('connection', (socket) => {
 
 app.get('/v1', (req, res) => {
     res.json('api v1');
-})
-app.post('/device', require('./routes/device'));
-app.get('/device', require('./routes/device'))
+    
+}); 
+
+app.use('/device', require('./routes/device'));
 
 server.listen(3000, () => {
     console.log('server started on port 3000');

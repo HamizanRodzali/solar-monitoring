@@ -11,11 +11,8 @@ import { AddDevicePage } from '../pages/add-device/add-device';
 import { DeviceService } from '../services/device.service';
 import { SocketService } from '../services/socket.service';
 import { ViewDevicePage } from '../pages/view-device/view-device';
-import { SocketIoModule, SocketIoConfig } from 'ng-socket-io';
 import { ChartsModule } from 'ng2-charts';
-// const config: SocketIoConfig = { url: 'http://localhost:3000/', options: {} };
-
-
+import { ToastService } from '../services/toast.service';
 
 @NgModule({
   declarations: [
@@ -43,7 +40,8 @@ import { ChartsModule } from 'ng2-charts';
     SplashScreen,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
     DeviceService,
-    SocketService
+    SocketService,
+    ToastService
   ]
 })
 export class AppModule {}

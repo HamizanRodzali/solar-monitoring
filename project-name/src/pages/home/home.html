@@ -13,7 +13,7 @@
 
 <ion-content >
   <ion-searchbar (ionInput)="getItems($event)"></ion-searchbar>
-  <ion-card *ngFor="let d of data.data">
+  <ion-card *ngFor="let d of data">
     <ion-card-content>
       <h3>Device Name : {{d.name}}</h3>
       <p>Mac Address : {{d.macAddress}}</p>
@@ -25,7 +25,7 @@
           <ion-icon name="eye"></ion-icon>
           <div>View Device</div>
         </button>
-        <button ion-button icon-left  small color="danger" (click)="deleteDevice(data.data)">
+        <button ion-button icon-left  small color="danger" (click)="deleteDevice(d)">
           <ion-icon name="trash"></ion-icon>
           <div>Delete Device</div>
         </button>
