@@ -23,15 +23,12 @@ export class HomePage {
   }
 
   ionViewDidLoad() {
-    // this.socket.connect();
     this.getDeviceList();
-    
-    // console.log('ionViewDidLoad');
   }
 
   getDeviceList() {
-    this.deviceService.getDevice().subscribe((response) => {
-			this.data = response
+    this.deviceService.getAll().subscribe((response) => {
+			this.data = response.json();
       console.log(this.data);
 		});
   }
@@ -69,8 +66,10 @@ export class HomePage {
 		
 	}
 
-  viewDevice() {
-    this.navCtrl.push(ViewDevicePage);
-  }
+  viewDevice(device) {
+		this.navCtrl.push(ViewDevicePage, {
+			device: device
+		});
+	}
 
 }

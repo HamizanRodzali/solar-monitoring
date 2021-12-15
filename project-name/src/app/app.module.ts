@@ -1,6 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { ErrorHandler, NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
+import { HttpModule } from '@angular/http';
 import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { StatusBar } from '@ionic-native/status-bar';
@@ -13,6 +14,7 @@ import { SocketService } from '../services/socket.service';
 import { ViewDevicePage } from '../pages/view-device/view-device';
 import { ChartsModule } from 'ng2-charts';
 import { ToastService } from '../services/toast.service';
+import { DataService } from '../services/data.service';
 
 @NgModule({
   declarations: [
@@ -24,8 +26,8 @@ import { ToastService } from '../services/toast.service';
   imports: [
     BrowserModule,
     HttpClientModule,
+    HttpModule,
     IonicModule.forRoot(MyApp),
-    // SocketIoModule.forRoot(config),
     ChartsModule
   ],
   bootstrap: [IonicApp],
@@ -41,7 +43,8 @@ import { ToastService } from '../services/toast.service';
     {provide: ErrorHandler, useClass: IonicErrorHandler},
     DeviceService,
     SocketService,
-    ToastService
+    ToastService,
+    DataService
   ]
 })
 export class AppModule {}

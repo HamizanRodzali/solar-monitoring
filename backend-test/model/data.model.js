@@ -31,7 +31,7 @@ DataSchema.pre('save', function(next) {
 
 DataSchema.post('save', function(doc) {
     //console.log('Post Save Called', doc);
-    // require('./data.socket.js').onSave(doc)
+    require('../mqtt/index').onSave(doc)
 });
 
 module.exports = mongoose.model('Data', DataSchema);

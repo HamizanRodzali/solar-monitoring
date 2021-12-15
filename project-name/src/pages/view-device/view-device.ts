@@ -1,6 +1,9 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { AlertController, IonicPage, NavController, NavParams } from 'ionic-angular';
+import { DataService } from '../../services/data.service';
+import { DeviceService } from '../../services/device.service';
 import { SocketService } from '../../services/socket.service';
+import { ToastService } from '../../services/toast.service';
 
 /**
  * Generated class for the ViewDevicePage page.
@@ -16,7 +19,15 @@ import { SocketService } from '../../services/socket.service';
 })
 export class ViewDevicePage {
 
-  temp: any = 0;
+
+  public device: any;
+	public data: Array<any>;
+	public toggleState: boolean = false;
+	private subData: any;
+	public lastRecord: any;
+  isData: boolean = false;
+
+  // temp: any = 0;
   // Line Chart
   public lineChartOptions: any = {
     responsive: true,
@@ -57,51 +68,8 @@ export class ViewDevicePage {
   public lineChartLegend: boolean = true;
   public lineChartType: string = 'line';
 
-  public lineChartData: Array<any> = [{
-    label: 'Solar V',
-    data: [16, 16, 18, 18.9, 19, 18.1, 17.7],
-    fill: false,
-    // borderColor: 'rgb(75, 192, 192)',
-    tension: 0.1
-  },
-  {
-    label: 'Solar C',
-    data: [65, 59, 80, 81, 56, 55, 40].reverse(),
-    fill: false,
-    // borderColor: 'rgb(75, 192, 192)',
-    tension: 0.1
-  },
-  {
-    label: 'TempLM35',
-    data: [30, 32, 36, 38, 35, 32, 39],
-    fill: false,
-    // borderColor: 'rgb(75, 192, 192)',
-    tension: 0.1
-  },
-  {
-    label: 'Light',
-    data: [2, , 1, 7, 10, 10, 6],
-    fill: false,
-    // borderColor: 'rgb(75, 192, 192)',
-    tension: 0.1
-  },
-  {
-    label: 'Temp',
-    data: [30, 32, 36, 38, 35, 32, 39].reverse(),
-    fill: false,
-    // borderColor: 'rgb(75, 192, 192)',
-    tension: 0.1
-  },
-  {
-    label: 'Humidity',
-    data: [50, 60, 60, 70, 70, 80, 74],
-    fill: false,
-    // borderColor: 'rgb(75, 192, 192)',
-    tension: 0.1
-  }
-  
-];
-  public lineChartLabels: Array<any> = [1, 2, 3, 4, 5, 6, 7];
+  public lineChartData: Array<any> = [];
+  public lineChartLabels:Array<any> = [];
   // public labels: Array<any> = ;
 
   public lineChartColors: Array<any> = [
@@ -142,20 +110,157 @@ export class ViewDevicePage {
 
   constructor(public navCtrl: NavController,
     public navParams: NavParams,
-    public socket: SocketService) {
+    public socket: SocketService,
+    private dataService: DataService,
+    private deviceService: DeviceService,
+    private toastService: ToastService) {
+
+      this.device = navParams.get("device");
 
   }
 
   ionViewDidLoad() {
-    this.socketInit();
+    this.deviceService.getOne(this.device._id).subscribe((response) => {
+			this.device = response.json();
+			this.getData();
+			this.socketInit();
+		});
+    // this.socketInit();
   }
 
+  getData() {
+		this.dataService.get(this.device.macAddress).subscribe((response) => {
+			this.data = response.json();
+			this.genChart();
+			this.lastRecord = this.data[0]; // descending order data
+			if (this.lastRecord) {
+				this.toggleState = this.lastRecord.data.l;
+			}
+		});
+	}
+
+
   socketInit() {
-    this.socket.getData().subscribe((data) => {
-      this.temp = data;
-      // this.lineChartData.push(data);
-      // console.log(data);
-    });
-  }
+		this.subData = this.socket.getDataV2(this.device.macAddress).subscribe((data) => {
+			if (this.data.length <= 0) return;
+			this.data.splice(this.data.length - 1, 1); // remove the last record
+			this.data.push(data); // add the new one
+			this.lastRecord = data;
+		}, (err) => console.error(err));
+	}
+
+  ionViewDidUnload() {
+		this.subData ? this.subData.unsubscribe() : '';
+	}
+
+  genChart() {
+		let data = this.data;
+		let _dtArr: Array<any>  = [];
+		let _lblArr: Array<any> = [];
+
+    let lm35: Array<any>   = [];
+    let light: Array<any>  = [];
+    let volt: Array<any>   = [];
+    let amp: Array<any>    = [];
+    let tmpArr: Array<any> = [];
+		let humArr: Array<any> = [];
+
+		for (var i = 0; i < data.length; i++) {
+			let _d = data[i];
+      lm35.push(_d.data.LM35);
+      light.push(_d.data.light);
+      volt.push(_d.data.voltage);
+      amp.push(_d.data.current);
+			tmpArr.push(_d.data.temp);
+			humArr.push(_d.data.humd);
+			_lblArr.push(this.formatDate(_d.createdAt));
+		}
+		// reverse data to show the latest on the right side
+    lm35.reverse();
+    light.reverse();
+    volt.reverse();
+    amp.reverse();
+		tmpArr.reverse();
+		humArr.reverse();
+		_lblArr.reverse();
+		_dtArr = [
+      {
+				data: lm35,
+				label: 'LM35',
+        fill: false,
+        // borderColor: 'rgb(75, 192, 192)',
+        tension: 0.1
+			},
+      {
+				data: light,
+				label: 'Light',
+        fill: false,
+        // borderColor: 'rgb(75, 192, 192)',
+        tension: 0.1
+			},
+      {
+				data: volt,
+				label: 'Voltage',
+        fill: false,
+        // borderColor: 'rgb(75, 192, 192)',
+        tension: 0.1
+			},
+      {
+				data: amp,
+				label: 'Current',
+        fill: false,
+        // borderColor: 'rgb(75, 192, 192)',
+        tension: 0.1
+			},
+			{
+				data: tmpArr,
+				label: 'Temperature',
+        fill: false,
+        // borderColor: 'rgb(75, 192, 192)',
+        tension: 0.1
+			},
+			{
+				data: humArr,
+				label: 'Humidity',
+        fill: false,
+        // borderColor: 'rgb(75, 192, 192)',
+        tension: 0.1
+			}
+		];
+		
+		// this.lineChartData = _dtArr.slice(0, 10);
+		// this.lineChartLabels = _lblArr.slice(0, 10);
+		this.lineChartData = _dtArr;
+		this.lineChartLabels = _lblArr;
+		this.isData = true;
+	}
+
+  // socketInit() {
+  //   this.socket.getData().subscribe((data) => {
+  //     this.temp = data;
+  //     // this.lineChartData.push(data);
+  //     // console.log(data);
+  //   });
+  // }
+  getLatest() {
+		
+		this.dataService.get(this.device.macAddress).subscribe((response) => {
+			this.data = response.json();
+			
+			this.lastRecord = this.data[0]; // descending order data
+			if (this.lastRecord) {
+				this.toggleState = this.lastRecord.data.l;
+			}
+		}, (err) => console.log(err));
+		this.genChart();
+		this.toastService.toggleToast('Graph updated');
+	}
+
+  private formatDate(originalTime) {
+		var d = new Date(originalTime);
+		var datestring =
+			d.getDate() + '-' + (d.getMonth() + 1) + '-' + d.getFullYear() + ' ' + d.getHours() + ':' + d.getMinutes();
+		return datestring;
+	}
 
 }

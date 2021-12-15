@@ -26,4 +26,18 @@ export class SocketService {
         })
         return observable;
     }
+
+    getDataV2(macAddress) {
+        let observable = new Observable(observer => {
+            this.socket.on('data:save:' + macAddress , (data) => {
+                observer.next(data);
+            });
+
+            return (error) => {
+                console.error(error);
+                this.socket.disconnect();
+            };
+        })
+        return observable;
+    }
 }

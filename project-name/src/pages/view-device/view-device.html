@@ -11,37 +11,60 @@
 </ion-header>
 
 <ion-content padding>
-  <ion-list>
+  <!-- <ion-list *ngIf="lastRecord">
     <ion-item>
-      <ion-label>Name</ion-label>
-      <ion-label>Solar 1</ion-label>
+      <ion-label>ID</ion-label>
+      <ion-label>{{device.name}}</ion-label>
     </ion-item>
     <ion-item>
+      <ion-label>Location</ion-label>
+      <ion-label>{{lastRecord.data.s.city ? lastRecord.data.s.city : ''}}</ion-label>
+    </ion-item>
+    <ion-item>
+      <ion-label>Fill Percent</ion-label>
+      <ion-label>{{lastRecord.data.h}} %</ion-label>
+    </ion-item>
+    <ion-item>
+      <ion-label>Last Record</ion-label>
+      <ion-label>{{lastRecord.createdAt | date: 'medium'}}</ion-label>
+    </ion-item>
+
+  </ion-list> -->
+  <ion-list *ngIf="lastRecord">
+    <ion-item>
+      <ion-label>Name</ion-label>
+      <ion-label>{{device.name}}</ion-label>
+    </ion-item>  
+    <ion-item>
       <ion-label>Temperature Lm35</ion-label>
-      <ion-label>{{temp.tempLM35}} C</ion-label>
+      <ion-label>{{lastRecord.data.LM35}} C</ion-label>
     </ion-item>
     <ion-item>
       <ion-label>Solar Voltage</ion-label>
-      <ion-label>{{temp.solarV}} v</ion-label>
+      <ion-label>{{lastRecord.data.voltage}} v</ion-label>
     </ion-item>
     <ion-item>
       <ion-label>Solar Current</ion-label>
-      <ion-label>{{temp.solarmA}} mA</ion-label>
+      <ion-label>{{lastRecord.data.current}} mA</ion-label>
     </ion-item>
     <ion-item>
       <ion-label>Light Intensity</ion-label>
-      <ion-label>{{temp.lightSensor}} lux</ion-label>
+      <ion-label>{{lastRecord.data.light}} lux</ion-label>
     </ion-item>
     <ion-item>
       <ion-label>Humidity</ion-label>
-      <ion-label>{{temp.humd}} %</ion-label>
+      <ion-label>{{lastRecord.data.humd}} %</ion-label>
     </ion-item>
     <ion-item>
       <ion-label>Temperature</ion-label>
-      <ion-label>{{temp.temp}} C</ion-label>
+      <ion-label>{{lastRecord.data.temp}} C</ion-label>
+    </ion-item>
+    <ion-item>
+      <ion-label>Last Record</ion-label>
+      <ion-label>{{lastRecord.createdAt | date: 'medium'}}</ion-label>
     </ion-item>
   </ion-list>
-  <ion-grid>
+  <ion-grid *ngIf="lastRecord">
     <ion-row>
         <ion-col>
             <canvas baseChart width="300" height="400"

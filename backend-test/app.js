@@ -29,16 +29,22 @@ const io = socketIO(server);
 
 io.on('connection', (socket) => {
     console.log('connected');
-    setInterval(() => {
-        socket.emit('temp', {
-            tempLM35: rand(30, 90),
-            lightSensor: rand(1, 10),
-            solarV: rand(30, 90),
-            solarmA: rand(1, 5),
-            temp: rand(10, 50),
-            humd: rand(30, 90)
-        })
-    }, 2000)
+    require('./mqtt/index').register(socket);
+    
+    // setInterval(() => {
+    //     socket.emit('temp', {
+    //         tempLM35: d.data.LM35,
+    //         lightSensor: d.data.light,
+    //         solarV: d.data.voltage,
+    //         solarmA: d.data.current,
+    //         temp: d.data.temp,
+    //         humd: d.data.humd
+    //     })
+    // }, 6000)
+});
+
+io.on('disconnect', function() {
+    console.log('socket disconnect');
 });
 
 app.get('/v1', (req, res) => {
@@ -47,12 +53,13 @@ app.get('/v1', (req, res) => {
 }); 
 
 app.use('/device', require('./routes/device'));
+app.use('/data', require('./routes/data'));
 
 server.listen(3000, () => {
     console.log('server started on port 3000');
 });
 
-function rand(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
+// function rand(min, max) {
+//     return Math.floor(Math.random() * (max - min + 1)) + min;
+// }
 

@@ -1,6 +1,8 @@
-import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Http, Response, Headers } from '@angular/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { Globals } from '../app/app.globals';
 
 export interface Device {
   name: string;
@@ -8,25 +10,47 @@ export interface Device {
 }
 @Injectable()
 export class DeviceService {
-  baseURL: string = "http://localhost:3000/";
-  constructor(private http: HttpClient) { }
+  token;
 
-  getDevice(): Observable<Device[]> {
-    console.log('getDevice ' + this.baseURL + 'device')
-    return this.http.get<Device[]>(this.baseURL + 'device')
-  }
+	constructor(private http: Http) {
+	}
 
-  addDevice(device: Device): Observable<HttpResponse<any>> {
-    const headers = { 'content-type': 'application/json' }
-    const body = JSON.stringify(device);
-    console.log(body)
-    return this.http.post<any>(this.baseURL + 'device', body, { 'headers': headers })
-  }
+	private createAuthorizationHeader(headers: Headers) {
+		headers.append('Accept-Language', 'en_US');
+		headers.append('Content-Type', 'application/json');
+	}
 
-  delete(id): Observable<any> {
-    const headers = { 'content-type': 'application/json' }
-    return this.http.delete<any>(this.baseURL + 'device/' + id, { 'headers': headers });
-  }
+	create(device): Observable<Response> {
+		let headers = new Headers();
+		this.createAuthorizationHeader(headers);
+		return this.http.post(Globals.BASE_API_URL + 'device', device, {
+			headers: headers
+		});
+	}
+
+	getAll(): Observable<Response> {
+		let headers = new Headers();
+		this.createAuthorizationHeader(headers);
+		return this.http.get(Globals.BASE_API_URL + 'device', {
+			headers: headers
+		});
+	}
+
+	getOne(id): Observable<Response> {
+		let headers = new Headers();
+		this.createAuthorizationHeader(headers);
+		return this.http.get(Globals.BASE_API_URL + 'device/' + id, {
+			headers: headers
+		});
+	}
+
+	delete(id): Observable<Response> {
+		let headers = new Headers();
+		this.createAuthorizationHeader(headers);
+		return this.http.delete(Globals.BASE_API_URL + 'device/' + id, {
+			headers: headers
+		});
+	}
 
 }
 

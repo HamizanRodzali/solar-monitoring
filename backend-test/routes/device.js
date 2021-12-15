@@ -9,6 +9,21 @@ router.get('/', function (req, res) {
     });
 });
 
+router.get('/:id', function (req, res) {
+    var deviceId = req.params.id;
+    // the current user should have created this device
+    if (!deviceId) return;
+    Device.findOne({
+        _id: deviceId,
+    }, function(err, device) {
+        if (err) return res.status(500).send(err);
+        if (!device) return res.status(404).end();
+        res.json(device);
+    });
+})
+
+
+
 router.delete('/:id', function (req, res) {
     Device.findOne({
         _id: req.params.id
@@ -20,7 +35,6 @@ router.delete('/:id', function (req, res) {
             return res.status(204).end();
         });
     });
-    // console.log(req.params.id)
 })
 
 router.post('/', function (req, res) {

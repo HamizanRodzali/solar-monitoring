@@ -32,12 +32,12 @@ export class AddDevicePage {
   ionViewDidLoad() {}
 
   create() {
-    this.deviceService.addDevice(this.device)
+    this.deviceService.create(this.device)
       .subscribe(data => {
         console.log(data)
         this.toastCtrl.showToast('data added');
         this.navCtrl.setRoot(HomePage);
-      })      
+      }, (err) => this.toastCtrl.showToast(err.message));      
   }
 
 }
