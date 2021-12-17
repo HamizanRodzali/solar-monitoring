@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { AlertController } from 'ionic-angular';
-import { NavController } from 'ionic-angular';
+import { NavController, ModalController } from 'ionic-angular';
 import { DeviceService } from '../../services/device.service';
 import { ToastService } from '../../services/toast.service';
 import { AddDevicePage } from '../add-device/add-device';
@@ -20,7 +20,8 @@ export class HomePage {
   constructor(public navCtrl: NavController,
     public deviceService: DeviceService,
     public toastService: ToastService,
-    private alertCtrl: AlertController) {
+    private alertCtrl: AlertController,
+    private modalCtrl: ModalController) {
 
   }
 
@@ -82,6 +83,16 @@ export class HomePage {
     this.navCtrl.push(ViewDevicePage, {
       device: device
     });
+  }
+
+  f() {
+    console.log('...');
+    const alert = this.alertCtrl.create({
+      title: "About",
+      message: "Version 1.4"
+    })
+
+    alert.present();
   }
 
 }

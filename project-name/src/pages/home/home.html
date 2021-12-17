@@ -1,14 +1,15 @@
 <ion-header>
-  <ion-navbar>
+  <ion-navbar color="primary">
     <ion-title>
-      Mobile Apps Solar Monitoring System
+      Mobile Apps Solar Monitoring
     </ion-title>
     <ion-buttons start>
-      <button ion-button icon-only (click)="addDevice()">
-        <ion-icon name="add"></ion-icon>
+      <button ion-button icon-only (click)="f()">
+        <ion-icon name="information-circle"></ion-icon>
       </button>
     </ion-buttons>
   </ion-navbar>
+  
 </ion-header>
 
 <ion-content>
@@ -26,24 +27,34 @@
       <h3>Device Name : {{d.name}}</h3>
       <p>Mac Address : {{d.macAddress}}</p>
       <!-- <label>Created At : {{device.createdAt | date:'medium'}}</label> -->
+      
     </ion-card-content>
-    <ion-row>
-      <ion-col>
-        <button ion-button icon-left small (click)="viewDevice(d)">
-          <ion-icon name="eye"></ion-icon>
-          <div>View Device</div>
-        </button>
-        <button ion-button icon-left small color="danger" (click)="deleteDevice(d)">
-          <ion-icon name="trash"></ion-icon>
-          <div>Delete Device</div>
-        </button>
-      </ion-col>
-
-    </ion-row>
+    <ion-grid>
+      <ion-row>
+        <ion-col>
+          <button ion-button icon-left small full round (click)="viewDevice(d)">
+            <ion-icon name="eye"></ion-icon>
+            <div>View Device</div>
+          </button>
+          
+        </ion-col>
+        <ion-col>
+          <button ion-button icon-left small full round color="danger" (click)="deleteDevice(d)">
+            <ion-icon name="trash"></ion-icon>
+            <div>Delete Device</div>
+          </button>
+        </ion-col>
+  
+      </ion-row>
+    </ion-grid>
+    
   </ion-card>
 
   <!-- {{data}} -->
   <!-- <button ion-button>View Device</button> -->
+  <ion-fab right bottom>
+    <button ion-fab color="blue" (click)="addDevice()"><ion-icon name="add"></ion-icon></button>
+  </ion-fab>
 
 </ion-content>
 
