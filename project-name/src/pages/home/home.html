@@ -11,9 +11,17 @@
   </ion-navbar>
 </ion-header>
 
-<ion-content >
-  <ion-searchbar (ionInput)="getItems($event)"></ion-searchbar>
-  <ion-card *ngFor="let d of data">
+<ion-content>
+  <ion-searchbar [(ngModel)]="searchTerm" (ionInput)="setFilteredItems($event)"></ion-searchbar>
+  <ion-refresher (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content 
+    pullingText="Pull to refresh" 
+    pullingIcon="arrow-dropdown" 
+    refreshingSpinner="circle"
+    refreshingText="...fetching">
+    </ion-refresher-content>
+  </ion-refresher>
+  <ion-card *ngFor="let d of filterData">
     <ion-card-content>
       <h3>Device Name : {{d.name}}</h3>
       <p>Mac Address : {{d.macAddress}}</p>
@@ -21,16 +29,16 @@
     </ion-card-content>
     <ion-row>
       <ion-col>
-        <button ion-button icon-left  small (click)="viewDevice(d)">
+        <button ion-button icon-left small (click)="viewDevice(d)">
           <ion-icon name="eye"></ion-icon>
           <div>View Device</div>
         </button>
-        <button ion-button icon-left  small color="danger" (click)="deleteDevice(d)">
+        <button ion-button icon-left small color="danger" (click)="deleteDevice(d)">
           <ion-icon name="trash"></ion-icon>
           <div>Delete Device</div>
         </button>
       </ion-col>
-    
+
     </ion-row>
   </ion-card>
 

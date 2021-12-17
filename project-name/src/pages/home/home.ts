@@ -14,11 +14,13 @@ import { ViewDevicePage } from '../view-device/view-device';
 export class HomePage {
   devices;
   // data: Array<any>;
-  data: any = []; 
-  constructor(public navCtrl: NavController, 
-              public deviceService: DeviceService,
-              public toastService: ToastService,
-              private alertCtrl: AlertController) {
+  searchTerm: any = "";
+  data: any = [];
+  filterData: any = [];
+  constructor(public navCtrl: NavController,
+    public deviceService: DeviceService,
+    public toastService: ToastService,
+    private alertCtrl: AlertController) {
 
   }
 
@@ -26,16 +28,26 @@ export class HomePage {
     this.getDeviceList();
   }
 
-  getDeviceList() {
-    this.deviceService.getAll().subscribe((response) => {
-			this.data = response.json();
-      console.log(this.data);
-		});
+  doRefresh(refresher) {
+    this.getDeviceList();
+    if (refresher) {
+      refresher.complete();
+    }
   }
 
-  getItems($event) {
-    const term = $event.target.value.toUpperCase();
-    console.log(term);
+  getDeviceList() {
+    this.deviceService.getAll().subscribe((response) => {
+      this.data = response.json();
+      this.filterData = this.data;
+      console.log(this.data);
+    });
+  }
+
+  setFilteredItems() {
+    this.filterData = this.data.filter((device) => {
+      return device.name.toLowerCase().indexOf(this.searchTerm.toLowerCase()) > -1;
+    })
+
   }
 
   addDevice() {
@@ -51,25 +63,25 @@ export class HomePage {
           handler: () => {
             this.deviceService.delete(device._id).subscribe((response) => {
               console.log(response);
-                this.toastService.toggleToast('Delete Success');
-                this.getDeviceList();
+              this.toastService.toggleToast('Delete Success');
+              this.getDeviceList();
             }, (err) => this.toastService.toggleToast(err.message));
           }
         },
         {
           text: 'Cancel',
-          handler: () => {}
+          handler: () => { }
         }
       ]
     });
     confirm.present();
-		
-	}
+
+  }
 
   viewDevice(device) {
-		this.navCtrl.push(ViewDevicePage, {
-			device: device
-		});
-	}
+    this.navCtrl.push(ViewDevicePage, {
+      device: device
+    });
+  }
 
 }
