@@ -6,19 +6,22 @@
 #include "LM35.h"
 #define DHTPIN 16
 #define DHTTYPE DHT22
+#define VT_PIN 32
+#define AT_PIN 33
+#define LM35_PIN 5
 
-const char* ssid = "SHA-256";
-const char* password =  "pass1234";
-const char* mqtt_server = "192.168.30.244";
-const int mqtt_port = 1883;
-const char* mqttUser = "";
-const char* mqttPassword = "";
+const char* ssid = "MY Wi-Fi";
+const char* password =  "Shuhaizal19";
+const char* mqtt_server = "driver.cloudmqtt.com";
+const int mqtt_port = 18685;
+const char* mqtt_user = "spvjjkqq";
+const char* mqtt_pass = "hc_7fOQmGQaE";
 
 // set sensor pin
 const int lightPin = 36;
 const int currentPin = 34;
 const int voltPin = 39;
-const int LM35PIN = 35;
+//const int LM35PIN = 0;
 
 // calculate volt sensor
 int voltVal = 0;
@@ -33,7 +36,7 @@ PubSubClient client(espClient);
 DHT dht(DHTPIN, DHTTYPE);
 //ACS712  ACS(currentPin, 5.0, 1023, 100);
 ACS712 current(ACS712_05B, currentPin);
-LM35 lm35(LM35PIN);
+LM35 lm35(LM35_PIN);
 
 // Setup wifi
 void setup_wifi() {
@@ -46,11 +49,11 @@ void setup_wifi() {
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
-  } 
+  }
   Serial.println("");
   Serial.print("WiFi connected - ESP IP address: ");
   Serial.println(WiFi.localIP());
-} 
+}
 
 // MQTT callback
 void callback(String topic, byte* message, unsigned int length) {
@@ -66,13 +69,13 @@ void callback(String topic, byte* message, unsigned int length) {
 }
 
 void reconnect() {
-// Loop until we're reconnected
+  // Loop until we're reconnected
   while (!client.connected()) {
     Serial.print("Attempting MQTT connection...");
     // Attempt to connect
-    if (client.connect("ESP8266Ultrasonic")) {
+    if (client.connect("ESP8266Ultrasonic", mqtt_user, mqtt_pass)) {
       Serial.println("connected");
-    } 
+    }
     else {
       Serial.print("failed, rc=");
       Serial.print(client.state());
@@ -81,7 +84,7 @@ void reconnect() {
       delay(5000);
     }
   }
-} 
+}
 
 void setup()
 {
@@ -95,15 +98,25 @@ void setup()
 }
 
 void loop() {
+
+  int vt_read = analogRead(VT_PIN);
+  int at_read = analogRead(AT_PIN);
+
+  delay(10);
+
+  float voltage = (vt_read * 5.5) / 1024.0;
+  float currentt = (at_read * (5.0 / 1024.0)) * 1000;
+  float watts = voltage * currentt;
+
   if (!client.connected()) {
     reconnect();
   }
   if (!client.loop()) {
-    client.connect("ESP8266lights");
+    client.connect("ESP8266lights", mqtt_user, mqtt_pass);
   }
-  
+
   //  get light sensor value
-  int lightVal = analogRead(lightPin);
+  int lightVal = analogRead(lightPin); delay(1);
 
   //  get current sensor value
   //  int mA = ACS.mA_DC();
@@ -126,7 +139,7 @@ void loop() {
   JsonObject& root = JSONbuffer.createObject();
 
   root["macAddress"] = WiFi.macAddress();
-  JsonObject& data = root.createNestedObject("data");  
+  JsonObject& data = root.createNestedObject("data");
   data["light"] = String(lightVal);
   data["current"] = String(mA);
   data["voltage"] = String(vOUT);
@@ -137,24 +150,16 @@ void loop() {
   char JSONmessageBuffer[200];
   root.printTo(JSONmessageBuffer, sizeof(JSONmessageBuffer));
   Serial.println("Sending message to MQTT topic..");
-  Serial.println(JSONmessageBuffer);
+  //  Serial.println(JSONmessageBuffer);
+  root.printTo(Serial);
 
-  if (client.publish("esp/test", JSONmessageBuffer) == true) {
+  if (client.publish("esp32/solar", JSONmessageBuffer) == true) {
     Serial.println("Success sending message");
   } else {
     Serial.println("Error sending message");
   }
 
-   Serial.println("-------------");
-
-  //  Serial.println(String(lightVal) + "," + String(currentValue) + "," + String(vIN) + "," + String(temperature) + "," + String(humi) + "," + String(temp));
-//  Serial.println("Light sensor: " + String(lightVal));
-//  Serial.println("Current sensor: " + String(mA));
-//  Serial.println("Voltage sensor: " + String(vOUT));
-//  Serial.println("LM35: " + String(lm35.cel()));
-//  Serial.println("Humidity: " + String(humi));
-//  Serial.println("Temp: " + String(temp));
-//  Serial.println("---------------------------------------------");
+  Serial.println("-------------");
   delay(5000);
 
 }

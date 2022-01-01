@@ -235,13 +235,6 @@ export class ViewDevicePage {
 		this.isData = true;
 	}
 
-  // socketInit() {
-  //   this.socket.getData().subscribe((data) => {
-  //     this.temp = data;
-  //     // this.lineChartData.push(data);
-  //     // console.log(data);
-  //   });
-  // }
   getLatest() {
 		
 		this.dataService.get(this.device.macAddress).subscribe((response) => {
