@@ -6,22 +6,26 @@ var mqtt = require('mqtt');
 var socket = undefined;
 var dataStream;
 
-var client = mqtt.connect({
-    port: 1883,
-    protocol: 'mqtt',
-    host: '127.0.0.1',
-    clientId: 'API_Server_Dev',
+var options = {
+    port: 18685,
+    host: 'mqtt://driver.cloudmqtt.com',
+    clientId: 'mqttjs_' + Math.random().toString(16).substr(2, 8),
+    username: 'spvjjkqq',
+    password: 'hc_7fOQmGQaE',
+    keepAlive: 60,
     reconnectPeriod: 1000,
-    username: 'API_Server_Dev',
-    password: 'API_Server_Dev',
-    keepalive: 300,
-    rejectUnauthorized: false
-});
+    protocolId: 'MQTT',
+    protocolVersion: 4,
+    clean: true,
+    encoding: 'utf8'
+}
+
+var client = mqtt.connect('mqtt://driver.cloudmqtt.com', options);
 
 client.on('connect', function () {
     console.log('Connected to Mosca at ');
     client.subscribe('api-engine');
-    client.subscribe('esp/test');
+    client.subscribe('esp32/solar');
 });
 
 client.on('message', function (topic, message) {
