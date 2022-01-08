@@ -30,7 +30,7 @@ client.on('connect', function () {
 
 client.on('message', function (topic, message) {
 
-    if (topic === 'esp/test') {
+    if (topic === 'esp32/solar') {
         var data = message.toString();
         var data1 = JSON.parse(data);
         dataStream = data1;
