@@ -237,16 +237,10 @@ export class ViewDevicePage {
 
   getLatest() {
 		
-		this.dataService.get(this.device.macAddress).subscribe((response) => {
-			this.data = response.json();
-			
-			this.lastRecord = this.data[0]; // descending order data
-			if (this.lastRecord) {
-				this.toggleState = this.lastRecord.data.l;
-			}
-		}, (err) => console.log(err));
-		this.genChart();
-		this.toastService.toggleToast('Graph updated');
+		this.getData();
+    this.genChart();
+      this.toastService.toggleToast('Graph updated');
+
 	}
 
   private formatDate(originalTime) {

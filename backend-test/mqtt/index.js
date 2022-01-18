@@ -25,12 +25,12 @@ var client = mqtt.connect('mqtt://driver.cloudmqtt.com', options);
 client.on('connect', function () {
     console.log('Connected to Mosca at ');
     client.subscribe('api-engine');
-    client.subscribe('esp32/solar');
+    client.subscribe('esp/solar');
 });
 
 client.on('message', function (topic, message) {
 
-    if (topic === 'esp32/solar') {
+    if (topic === 'esp/solar') {
         var data = message.toString();
         var data1 = JSON.parse(data);
         dataStream = data1;
