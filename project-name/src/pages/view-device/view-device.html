@@ -1,6 +1,11 @@
 <ion-header>
   <ion-navbar color="primary">
     <ion-title>{{device.name}}</ion-title>
+    <ion-buttons start>
+      <button ion-button icon-only (click)="getLatest()">
+        <ion-icon name="refresh"></ion-icon>
+      </button>
+    </ion-buttons>
   </ion-navbar>
 </ion-header>
 
@@ -39,7 +44,7 @@
       <ion-label>{{lastRecord.createdAt | date: 'medium'}}</ion-label>
     </ion-item>
   </ion-list>
-  <ion-grid *ngIf="lastRecord">
+  <!-- <ion-grid *ngIf="lastRecord">
     <ion-row>
         <ion-col>
             <canvas baseChart width="300" height="400"
@@ -58,6 +63,36 @@
             <button ion-button full color="success" (click)="getLatest()">Get Latest graph</button>
         </ion-col>
     </ion-row>
+</ion-grid> -->
+<ion-item>
+  <ion-label>Graph reading</ion-label>
+  <ion-select [(ngModel)]="pvalue" (ionChange)="getValue()">
+    <ion-option value="day" [selected]="true">24 hrs</ion-option>
+    <ion-option value="week">1 week</ion-option>
+    <ion-option value="month">1 month</ion-option>
+    <ion-option value="year">1 year</ion-option>
+  </ion-select>
+</ion-item>
+
+<ion-grid *ngIf="lastRecord">
+  <ion-row>
+      <ion-col>
+          <canvas baseChart width="300" height="400"
+                [datasets]="lineChartData"
+                [labels]="lineChartLabels"
+                [options]="lineChartOptions"
+                [colors]="lineChartColors"
+                [legend]="lineChartLegend"
+                [chartType]="lineChartType"
+                (chartHover)="chartHovered($event)"
+                (chartClick)="chartClicked($event)"></canvas>
+      </ion-col>
+  </ion-row>
+  <ion-row>
+    <ion-col>
+        <button ion-button full color="success" (click)="getLatest()">Get Latest graph</button>
+    </ion-col>
+</ion-row>
 </ion-grid>
 
 </ion-content>
