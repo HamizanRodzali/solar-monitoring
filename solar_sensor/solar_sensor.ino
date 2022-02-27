@@ -3,8 +3,8 @@
 #include <ArduinoJson.h>
 #include "DHT.h"
 
-const char* ssid = "MY Wi-Fi";
-const char* password =  "Shuhaizal19";
+const char* ssid = "Hamizan";
+const char* password =  "huhuhuhuhu";
 const char* mqtt_server = "driver.cloudmqtt.com";
 const int   mqtt_port = 18685;
 const char* mqtt_user = "spvjjkqq";
@@ -152,6 +152,7 @@ void loop() {
     // Serial.print("VT ");
     int at_read = analogRead(sensorPin); delay(1);
     float current = (at_read * (3.3 / 1024.0)) * 1000;
+    float watts = voltage * current;
     // ---------------------------------------------------
 
     delay(10);
@@ -165,6 +166,7 @@ void loop() {
     data["light"] = light;
     data["current"] = current;
     data["voltage"] = voltage;
+    data["watt"] = watts;
     data["LM35"] = lm35;
     data["humd"] = h;
     data["temp"] = t;

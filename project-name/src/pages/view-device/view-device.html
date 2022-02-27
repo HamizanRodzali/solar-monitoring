@@ -16,16 +16,20 @@
       <ion-label>{{device.name}}</ion-label>
     </ion-item>  
     <ion-item>
-      <ion-label>Temperature Lm35</ion-label>
-      <ion-label>{{lastRecord.data.LM35}} C</ion-label>
+      <ion-label>PV Temperature</ion-label>
+      <ion-label>{{lastRecord.data.LM35.toFixed(2)}} C</ion-label>
     </ion-item>
     <ion-item>
-      <ion-label>Solar Voltage</ion-label>
-      <ion-label>{{lastRecord.data.voltage}} v</ion-label>
+      <ion-label>PV Voltage</ion-label>
+      <ion-label>{{lastRecord.data.voltage.toFixed(2)}} V</ion-label>
     </ion-item>
     <ion-item>
-      <ion-label>Solar Current</ion-label>
-      <ion-label>{{lastRecord.data.current}} mA</ion-label>
+      <ion-label>PV Current</ion-label>
+      <ion-label>{{lastRecord.data.current.toFixed(2)}} mA</ion-label>
+    </ion-item>
+    <ion-item>
+      <ion-label>PV Watts</ion-label>
+      <ion-label>{{lastRecord.data.watt.toFixed(2)}} mW</ion-label>
     </ion-item>
     <ion-item>
       <ion-label>Light Intensity</ion-label>
@@ -33,11 +37,11 @@
     </ion-item>
     <ion-item>
       <ion-label>Humidity</ion-label>
-      <ion-label>{{lastRecord.data.humd}} %</ion-label>
+      <ion-label>{{lastRecord.data.humd.toFixed(2)}} %</ion-label>
     </ion-item>
     <ion-item>
       <ion-label>Temperature</ion-label>
-      <ion-label>{{lastRecord.data.temp}} C</ion-label>
+      <ion-label>{{lastRecord.data.temp.toFixed(2)}} C</ion-label>
     </ion-item>
     <ion-item>
       <ion-label>Last Record</ion-label>
@@ -64,7 +68,7 @@
         </ion-col>
     </ion-row>
 </ion-grid> -->
-<ion-item>
+<!-- <ion-item>
   <ion-label>Graph reading</ion-label>
   <ion-select [(ngModel)]="pvalue" (ionChange)="getValue()">
     <ion-option value="day" [selected]="true">24 hrs</ion-option>
@@ -72,9 +76,22 @@
     <ion-option value="month">1 month</ion-option>
     <ion-option value="year">1 year</ion-option>
   </ion-select>
-</ion-item>
+</ion-item> -->
 
 <ion-grid *ngIf="lastRecord">
+  <ion-row>
+    <ion-col>
+        <canvas baseChart width="300" height="400"
+              [datasets]="lineChartData2"
+              [labels]="lineChartLabels2"
+              [options]="lineChartOptions2"
+              [colors]="lineChartColors2"
+              [legend]="lineChartLegend"
+              [chartType]="lineChartType2"
+              (chartHover)="chartHovered($event)"
+              (chartClick)="chartClicked($event)"></canvas>
+    </ion-col>
+</ion-row>
   <ion-row>
       <ion-col>
           <canvas baseChart width="300" height="400"
@@ -88,6 +105,7 @@
                 (chartClick)="chartClicked($event)"></canvas>
       </ion-col>
   </ion-row>
+  
   <ion-row>
     <ion-col>
         <button ion-button full color="success" (click)="getLatest()">Get Latest graph</button>

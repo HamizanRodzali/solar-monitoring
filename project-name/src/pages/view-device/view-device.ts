@@ -62,41 +62,90 @@ export class ViewDevicePage {
     },
     title: {
       display: true,
-      text: 'Solar Volt & Current, LM35, Humidity, Temp, Light vs Time'
+      text: 'PV Temperature, Humidity, Temp, Light'
+    }
+  };
+
+  public lineChartOptions2: any = {
+    responsive: true,
+    legend: {
+      position: 'bottom'
+    },
+    hover: {
+      mode: 'label'
+    },
+    scales: {
+      xAxes: [
+        {
+          display: true,
+          scaleLabel: {
+            display: true,
+            labelString: 'Time'
+          }
+        }
+      ],
+      yAxes: [
+        {
+          display: true,
+          ticks: {
+            beginAtZero: true,
+            steps: 10,
+            stepValue: 5,
+            max: 100
+          }
+        }
+      ]
+    },
+    title: {
+      display: true,
+      text: 'Solar Volt, Current & Watt'
     }
   };
 
   public lineChartLegend: boolean = true;
   public lineChartType: string = 'line';
+  public lineChartType2: string = 'line';
 
+  // Graph 1
   public lineChartData: Array<any> = [];
   public lineChartLabels: Array<any> = [];
+
+  // Graph 2
+  public lineChartData2: Array<any> = [];
+  public lineChartLabels2: Array<any> = [];
   // public labels: Array<any> = ;
 
   public lineChartColors: Array<any> = [
-    { // grey
-      backgroundColor: 'rgba(148,159,177,0.2)',
-      borderColor: 'rgba(148,159,177,1)',
-      pointBackgroundColor: 'rgba(148,159,177,1)',
-      pointBorderColor: '#fff',
-      pointHoverBackgroundColor: '#fff',
-      pointHoverBorderColor: 'rgba(148,159,177,0.8)'
+    { 
+      borderColor: '#e84351',
+      backgroundColor: '#e84351' 
     },
-    { // dark grey
-      backgroundColor: 'rgba(77,83,96,0.2)',
-      borderColor: 'rgba(77,83,96,1)',
-      pointBackgroundColor: 'rgba(77,83,96,1)',
-      pointBorderColor: '#fff',
-      pointHoverBackgroundColor: '#fff',
-      pointHoverBorderColor: 'rgba(77,83,96,1)'
+    { 
+      borderColor: '#434a54',
+      backgroundColor: '#434a54' 
     },
-    { // grey
-      backgroundColor: 'rgba(148,159,177,0.2)',
-      borderColor: 'rgba(148,159,177,1)',
-      pointBackgroundColor: 'rgba(148,159,177,1)',
-      pointBorderColor: '#fff',
-      pointHoverBackgroundColor: '#fff',
-      pointHoverBorderColor: 'rgba(148,159,177,0.8)'
+    { 
+      borderColor: '#3ebf9b',
+      backgroundColor: '#3ebf9b' 
+    },
+    {
+      borderColor: '#4d86dc',
+      backgroundColor: '#4d86dc'
+    }, 
+  ];
+
+  public lineChartColors2: Array<any> = [
+    {
+      borderColor: '#4d86dc',
+      backgroundColor: '#4d86dc'
+    }, 
+    {
+      borderColor: '#f3af37',
+      backgroundColor: '#f3af37'
+    },
+    { 
+      borderColor: '#3ebf9b',
+      backgroundColor: '#3ebf9b' 
     }
   ];
 
@@ -160,10 +209,14 @@ export class ViewDevicePage {
     let _dtArr: Array<any> = [];
     let _lblArr: Array<any> = [];
 
+    let _dtArr2: Array<any> = [];
+    let _lblArr2: Array<any> = [];
+
     let lm35: Array<any> = [];
     let light: Array<any> = [];
     let volt: Array<any> = [];
     let amp: Array<any> = [];
+    let watt: Array<any> = [];
     let tmpArr: Array<any> = [];
     let humArr: Array<any> = [];
 
@@ -173,6 +226,7 @@ export class ViewDevicePage {
       light.push(_d.data.light);
       volt.push(_d.data.voltage);
       amp.push(_d.data.current);
+      watt.push(_d.data.watt);
       tmpArr.push(_d.data.temp);
       humArr.push(_d.data.humd);
       _lblArr.push(this.formatDate(_d.createdAt));
@@ -182,13 +236,14 @@ export class ViewDevicePage {
     light.reverse();
     volt.reverse();
     amp.reverse();
+    watt.reverse();
     tmpArr.reverse();
     humArr.reverse();
     _lblArr.reverse();
     _dtArr = [
       {
         data: lm35,
-        label: 'LM35',
+        label: 'PV Temperature',
         fill: false,
         // borderColor: 'rgb(75, 192, 192)',
         tension: 0.1
@@ -200,20 +255,27 @@ export class ViewDevicePage {
         // borderColor: 'rgb(75, 192, 192)',
         tension: 0.1
       },
-      {
-        data: volt,
-        label: 'Voltage',
-        fill: false,
-        // borderColor: 'rgb(75, 192, 192)',
-        tension: 0.1
-      },
-      {
-        data: amp,
-        label: 'Current',
-        fill: false,
-        // borderColor: 'rgb(75, 192, 192)',
-        tension: 0.1
-      },
+      // {
+      //   data: volt,
+      //   label: 'Voltage',
+      //   fill: false,
+      //   // borderColor: 'rgb(75, 192, 192)',
+      //   tension: 0.1
+      // },
+      // {
+      //   data: amp,
+      //   label: 'Current',
+      //   fill: false,
+      //   // borderColor: 'rgb(75, 192, 192)',
+      //   tension: 0.1
+      // },
+      // {
+      //   data: watt,
+      //   label: 'Watt',
+      //   fill: false,
+      //   // borderColor: 'rgb(75, 192, 192)',
+      //   tension: 0.1
+      // },
       {
         data: tmpArr,
         label: 'Temperature',
@@ -230,10 +292,37 @@ export class ViewDevicePage {
       }
     ];
 
+    _dtArr2 = [
+      {
+        data: volt,
+        label: 'Voltage',
+        fill: false,
+        // borderColor: 'rgb(75, 192, 192)',
+        tension: 0.1
+      },
+      {
+        data: amp,
+        label: 'Current',
+        fill: false,
+        // borderColor: 'rgb(75, 192, 192)',
+        tension: 0.1
+      },
+      {
+        data: watt,
+        label: 'Watt',
+        fill: false,
+        // borderColor: 'rgb(75, 192, 192)',
+        tension: 0.1
+      }
+    ]
+
     // this.lineChartData = _dtArr.slice(0, 10);
     // this.lineChartLabels = _lblArr.slice(0, 10);
     this.lineChartData = _dtArr;
     this.lineChartLabels = _lblArr;
+
+    this.lineChartData2 = _dtArr2;
+    this.lineChartLabels2 = _lblArr;
     this.isData = true;
   }
 
